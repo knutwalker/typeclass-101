@@ -5,25 +5,22 @@ package object monoid {
   // add a bunch of things together
 
 
-  // fails: needs complex wrapper everytime, how to get 0
   trait NumberLike[A] {
-    def +(to: A): A
+    def zero: A
+    def add(x: A, y: A): A
   }
 
-  class IntNumber(val underlying: Int) extends NumberLike[IntNumber] {
-    def +(to: IntNumber): IntNumber = new IntNumber(underlying + to.underlying)
+  implicit object IntNumber extends NumberLike[Int] {
+    def zero: Int = 0
+    def add(x: Int, y: Int): Int = x + y
   }
-  class DoubleNumber(val underlying: Double) extends NumberLike[DoubleNumber] {
-    def +(to: DoubleNumber): DoubleNumber = new DoubleNumber(underlying + to.underlying)
-  }
-
-  def sumNumber[A <: NumberLike[A]](xs: List[A])(zero: A): A = xs match {
-    case x :: rest => x + sumNumber(rest)(zero)
-    case Nil       => zero
+  implicit object DoubleNumber extends NumberLike[Double] {
+    def zero: Double = 0.0
+    def add(x: Double, y: Double): Double = x + y
   }
 
-  def sum(xs: List[Int]): Int =
-    sumNumber(xs map (new IntNumber(_)))(new IntNumber(0)).underlying
-  def sum(xs: List[Double]): Double =
-    sumNumber(xs map (new DoubleNumber(_)))(new DoubleNumber(0)).underlying
+  def sum[A : NumberLike](xs: List[A]): A = xs match {
+    case x :: rest => implicitly[NumberLike[A]].add(x, sum(rest))
+    case Nil       => implicitly[NumberLike[A]].zero
+  }
 }
