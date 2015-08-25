@@ -5,10 +5,14 @@ package object monoid {
   // add a bunch of things together
 
 
-  trait Monoid[A] {
-    def zero: A
+  trait Semigroup[A] {
     def add(x: A, y: A): A
   }
+
+  trait Monoid[A] extends Semigroup[A] {
+    def zero: A
+  }
+
   object Monoid {
     def apply[A](implicit A: Monoid[A]): Monoid[A] = A
 
@@ -22,8 +26,8 @@ package object monoid {
     }
   }
 
-  implicit class MonoidOps[A](val x: A) extends AnyVal {
-    def |+|(y: A)(implicit A: Monoid[A]) = A.add(x, y)
+  implicit class SemigroupOps[A](val x: A) extends AnyVal {
+    def |+|(y: A)(implicit A: Semigroup[A]) = A.add(x, y)
   }
 
   def sum[A: Monoid](xs: List[A]): A = xs match {
