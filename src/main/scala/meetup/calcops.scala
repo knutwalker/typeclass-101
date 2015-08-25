@@ -68,6 +68,12 @@ package calcops {
 
     // -------------
 
+    trait CanSub[A] {
+      def sub(x: A, y: A): A
+    }
+
+    // -------------
+
     trait CanMult[A] {
       def mult(x: A, y: A): A
     }
@@ -78,6 +84,13 @@ package calcops {
     implicit final class CanAddOps[A](val x: A) extends AnyVal {
       def add(y: A)(implicit A: CanAdd[A]): A =
         A.add(x, y)
+    }
+
+    // -------------
+
+    implicit final class CanSubOps[A](val x: A) extends AnyVal {
+      def sub(y: A)(implicit A: CanSub[A]): A =
+        A.sub(x, y)
     }
 
     // -------------
@@ -116,10 +129,33 @@ package calcops {
       def mult(x: Real32, y: Real32) = Real32(x.x * y.x)
     }
 
+    // -------------
+
+    implicit object Int32CanSub extends CanSub[Int32] {
+      def sub(x: Int32, y: Int32) = Int32(x.x - y.x)
+    }
+
+    // -------------
+
+    implicit object Int64CanSub extends CanSub[Int64] {
+      def sub(x: Int64, y: Int64) = Int64(x.x - y.x)
+    }
+
+    // -------------
+
+    implicit object Real32CanSub extends CanSub[Real32] {
+      def sub(x: Real32, y: Real32) = Real32(x.x - y.x)
+    }
+
     // ==================
 
     def add[A: CanAdd](left: A, right: A) =
       left add right
+
+    // -------------
+
+    def sub[A: CanSub](left: A, right: A) =
+      left sub right
 
     // -------------
 
