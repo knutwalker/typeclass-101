@@ -91,6 +91,7 @@ package calcops {
 
     sealed trait Operand
     case class Int32(x: Int) extends Operand
+    case class Int64(x: Long) extends Operand
     case class Real32(x: Float) extends Operand
 
     // -----------------
@@ -99,6 +100,13 @@ package calcops {
     implicit object Int32CanCalculate extends CanAdd[Int32] with CanMult[Int32] {
       def add(x: Int32, y: Int32) = Int32(x.x + y.x)
       def mult(x: Int32, y: Int32) = Int32(x.x * y.x)
+    }
+
+    // -------------
+
+    implicit object Int64CanCalculate extends CanAdd[Int64] with CanMult[Int64] {
+      def add(x: Int64, y: Int64) = Int64(x.x + y.x)
+      def mult(x: Int64, y: Int64) = Int64(x.x * y.x)
     }
 
     // -------------
