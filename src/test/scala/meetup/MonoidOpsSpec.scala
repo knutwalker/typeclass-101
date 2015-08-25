@@ -11,4 +11,9 @@ class MonoidOpsSpec extends FlatSpec with Matchers {
 
     sum(List(1, 2, 3, 4, 5)) should be (15)
   }
+
+  it should "sum a List of doubles" in {
+
+    sum(List(1.0, 2.0, 3.0, 4.0, 5.0)) should be (15.0)
+  }
 }
