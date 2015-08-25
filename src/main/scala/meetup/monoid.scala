@@ -23,11 +23,11 @@ package object monoid {
   }
 
   implicit class MonoidOps[A](val x: A) extends AnyVal {
-    def +(y: A)(implicit A: Monoid[A]) = A.add(x, y)
+    def |+|(y: A)(implicit A: Monoid[A]) = A.add(x, y)
   }
 
   def sum[A: Monoid](xs: List[A]): A = xs match {
-    case x :: rest => x + sum(rest)
+    case x :: rest => x |+| sum(rest)
     case Nil       => Monoid[A].zero
   }
 }
