@@ -27,8 +27,13 @@ package object foldable {
 
     def sum(implicit F: Fold[F], A: Monoid[A]): A =
       F.foldl(self)(A.zero)(A.add)
+
+    def length(implicit F: Fold[F]): Int =
+      F.foldl(self)(0)((n, _) => n + 1)
   }
 
 
   def sum[F[_]: Fold, A: Monoid](xs: F[A]): A = xs.sum
+
+  def length[F[_]: Fold](xs: F[_]): Int = xs.length
 }
