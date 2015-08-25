@@ -19,8 +19,13 @@ package object monoid {
     def add(x: Double, y: Double): Double = x + y
   }
 
-  def sum[A](xs: List[A])(implicit A: NumberLike[A]): A = xs match {
-    case x :: rest => A.add(x, sum(rest))
-    case Nil       => A.zero
+  implicit class NumberLikeOps[A](val x: A) extends AnyVal {
+    def +(y: A)(implicit A: NumberLike[A]) = A.add(x, y)
+  }
+  def zero[A: NumberLike] = implicitly[NumberLike[A]].zero
+
+  def sum[A: NumberLike](xs: List[A]): A = xs match {
+    case x :: rest => x + sum(rest)
+    case Nil       => zero[A]
   }
 }
