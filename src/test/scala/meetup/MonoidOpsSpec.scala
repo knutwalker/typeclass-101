@@ -16,4 +16,9 @@ class MonoidOpsSpec extends FlatSpec with Matchers {
 
     sum(List(1.0, 2.0, 3.0, 4.0, 5.0)) should be (15.0)
   }
+
+  it should "sum a completely new Point" in {
+    case class Point(x: Int, y: Int)
+    sum(List(Point(1, 2), Point(3, 4), Point(5, 6))) should be (Point(9, 12))
+  }
 }
