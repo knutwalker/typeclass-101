@@ -24,9 +24,11 @@ package object foldable {
   implicit class FoldOps[F[_], A](val self: F[A]) extends AnyVal {
     def foldl[B](zero: B)(f: (B, A) => B)(implicit F: Fold[F]): B =
       F.foldl(self)(zero)(f)
+
+    def sum(implicit F: Fold[F], A: Monoid[A]): A =
+      F.foldl(self)(A.zero)(A.add)
   }
 
 
-  def sum[F[_]: Fold, A: Monoid](xs: F[A]): A =
-    xs.foldl(Monoid[A].zero)(Monoid[A].add)
+  def sum[F[_]: Fold, A: Monoid](xs: F[A]): A = xs.sum
 }
