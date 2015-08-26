@@ -14,8 +14,20 @@ package object std {
     }
   }
 
-  trait Comparable[A] {
+  trait Comparable[A] extends Equality[A] {
     def lte(x: A, y: A): Boolean
+
+    def lt(x: A, y: A): Boolean =
+      lte(x, y) && !lte(y, x)
+
+    def gte(x: A, y: A): Boolean =
+      !lte(x, y) || lte(y, x)
+
+    def gt(x: A, y: A): Boolean =
+      !lte(x, y)
+
+    def eql(x: A, y: A): Boolean =
+      lte(x, y) && lte(y, x)
   }
   object Comparable {
     implicit def byScalaOrd[A](implicit A: Ordering[A]): Comparable[A] = new Comparable[A] {
@@ -25,7 +37,7 @@ package object std {
   }
 
   implicit class EqualityOps[A](val x: A) extends AnyVal {
-    def ===(y: A)(implicit A: Equality[A]): Boolean =
+    def ≡(y: A)(implicit A: Equality[A]): Boolean =
       A.eql(x, y)
 
     def ≠(y: A)(implicit A: Equality[A]): Boolean =
@@ -35,5 +47,14 @@ package object std {
   implicit class ComparableOps[A](val x: A) extends AnyVal {
     def ≤(y: A)(implicit A: Comparable[A]): Boolean =
       A.lte(x, y)
+
+    def <(y: A)(implicit A: Comparable[A]): Boolean =
+      A.lt(x, y)
+
+    def ≥(y: A)(implicit A: Comparable[A]): Boolean =
+      A.gte(x, y)
+
+    def >(y: A)(implicit A: Comparable[A]): Boolean =
+      A.gt(x, y)
   }
 }
