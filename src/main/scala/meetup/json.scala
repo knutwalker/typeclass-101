@@ -69,9 +69,43 @@ package object json {
     }
 
     object JsonRead extends auto.JsonReadDerived {
+
+      implicit object jsonReadInt extends JsonRead[Int] {
+        def read(j: Json) = j match {
+          case JsonNumber(n) if n.isValidInt => valid(n.toInt)
+          case JsonNumber(n)                 => invalid(s"$n is a number but not a valid int.")
+          case x                             => invalid(s"$x is not a number.")
+        }
+      }
+
+      implicit object jsonReadString extends JsonRead[String] {
+        def read(j: Json) = j match {
+          case JsonString(s) => valid(s)
+          case x             => invalid(s"$x is not a string.")
+        }
+      }
+
+      implicit object jsonReadBool extends JsonRead[Boolean] {
+        def read(j: Json) = j match {
+          case JsonBool(b) => valid(b)
+          case x           => invalid(s"$x is not a boolean.")
+        }
+      }
     }
 
     object JsonWrite extends auto.JsonWriteDerived {
+
+      implicit object jsonWriteInt extends JsonWrite[Int] {
+        def write(a: Int) = JsonNumber(BigDecimal(a))
+      }
+
+      implicit object jsonWriteString extends JsonWrite[String] {
+        def write(a: String) = JsonString(a)
+      }
+
+      implicit object jsonWriteBool extends JsonWrite[Boolean] {
+        def write(a: Boolean) = JsonBool(a)
+      }
     }
   }
 
