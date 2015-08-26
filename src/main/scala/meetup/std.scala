@@ -8,6 +8,11 @@ package object std {
     def neq(x: A, y: A): Boolean =
       !eql(x, y)
   }
+  object Equality {
+    implicit def naturalEquality[A]: Equality[A] = new Equality[A] {
+      def eql(x: A, y: A): Boolean = x == y
+    }
+  }
 
   implicit class EqualityOps[A](val x: A) extends AnyVal {
     def ===(y: A)(implicit A: Equality[A]): Boolean =
