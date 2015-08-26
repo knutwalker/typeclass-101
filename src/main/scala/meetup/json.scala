@@ -225,11 +225,14 @@ package object json {
     import ops._
     import syntax._
 
-    def apply(x: String): Json =
-      Parser.parseUnsafe(x)(JsonFacade)
+    private final val catcher =
+      catching[Throwable].using(_.getMessage)
+
+    def apply(x: String): Result[String, Json] =
+      catcher.run(Parser.parseUnsafe(x)(JsonFacade))
 
     def as[A: JsonRead](x: String): Result[String, A] =
-      apply(x).read[A]
+      apply(x).flatMap(_.read[A])
 
     object JsonFacade extends SimpleFacade[Json] {
       def jnull() = JsonNull
